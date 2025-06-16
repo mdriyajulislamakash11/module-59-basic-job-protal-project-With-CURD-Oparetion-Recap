@@ -28,6 +28,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const jobsCollections = client.db("job-hunter").collection("jobs");
+    const jobsApplicationCollections = client.db("job-hunter").collection("job_applications");
 
     app.get("/jobs", async (req, res) => {
         const cursor = jobsCollections.find()
@@ -39,6 +40,12 @@ async function run() {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
         const result = await jobsCollections.findOne(query);
+        res.send(result)
+    });
+
+    app.post("/job_applications", async (req, res) => {
+        const application = req.body;
+        const result = await jobsApplicationCollections.insertOne(application)
         res.send(result)
     })
 
