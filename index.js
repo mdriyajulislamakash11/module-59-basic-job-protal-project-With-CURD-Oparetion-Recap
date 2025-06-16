@@ -9,8 +9,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-console.log(process.env.DB_USER);
-console.log(process.env.DB_PASSWORD);
+// console.log(process.env.DB_USER);
+// console.log(process.env.DB_PASSWORD);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.zchez.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -49,12 +49,25 @@ async function run() {
 
     app.get("/job_applications", async (req, res) => {
       const email = req.query.email;
-      const query = { applicantEmail: email};
-      const result = await jobsApplicationCollections.find(query).toArray()
-      res.send(result)
+      const query = { applicantEmail: email };
+      const result = await jobsApplicationCollections.find(query).toArray();
+
+      // fokira way te aggregate data
+      for (const data of result) {
+        console.log(data.jobId);
+        const query1 = { _id: new ObjectId(data.jobId) };
+        const job = await jobsCollections.findOne(query1);
+
+        if (job) {
+          data.title = job.title;
+          data.location = job.location;
+          data.company = job.company;
+          data.company_logo = job.company_logo;
+        }
+      }
+
+      res.send(result);
     });
-
-
 
     app.post("/job_applications", async (req, res) => {
       const application = req.body;
