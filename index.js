@@ -28,26 +28,39 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const jobsCollections = client.db("job-hunter").collection("jobs");
-    const jobsApplicationCollections = client.db("job-hunter").collection("job_applications");
+    const jobsApplicationCollections = client
+      .db("job-hunter")
+      .collection("job_applications");
 
     app.get("/jobs", async (req, res) => {
-        const cursor = jobsCollections.find()
-        const result = await cursor.toArray()
-        res.send(result)
+      const cursor = jobsCollections.find();
+      const result = await cursor.toArray();
+      res.send(result);
     });
 
     app.get("/jobs/:id", async (req, res) => {
-        const id = req.params.id;
-        const query = {_id: new ObjectId(id)}
-        const result = await jobsCollections.findOne(query);
-        res.send(result)
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await jobsCollections.findOne(query);
+      res.send(result);
     });
 
+    // job application
+
+    app.get("/job_applications", async (req, res) => {
+      const email = req.query.email;
+      const query = { applicantEmail: email};
+      const result = await jobsApplicationCollections.find(query).toArray()
+      res.send(result)
+    });
+
+
+
     app.post("/job_applications", async (req, res) => {
-        const application = req.body;
-        const result = await jobsApplicationCollections.insertOne(application)
-        res.send(result)
-    })
+      const application = req.body;
+      const result = await jobsApplicationCollections.insertOne(application);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
