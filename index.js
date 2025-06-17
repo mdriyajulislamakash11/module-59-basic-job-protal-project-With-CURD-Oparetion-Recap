@@ -87,12 +87,19 @@ async function run() {
       res.send(result)
     })
 
-    // app.get("/job_applications/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await jobsApplicationCollections.findOne(query);
-    //   res.send(result);
-    // });
+    app.patch("/job_applications/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const data = req.body;
+      const updateDoc = {
+        $set: {
+          status : data.status
+        }
+      }
+
+      const result = await jobsApplicationCollections.updateOne(query, updateDoc);
+      res.send(result);
+    });
 
     app.post("/job_applications", async (req, res) => {
       const application = req.body;
