@@ -80,6 +80,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/viewApplications/jobs/:jobId", async (req, res) => {
+      const id = req.params.id;
+      const query = {jobId: new ObjectId(id)}
+      const result = await jobsApplicationCollections.find(query).toArray()
+      res.send(result)
+    })
+
     app.get("/job_applications/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
