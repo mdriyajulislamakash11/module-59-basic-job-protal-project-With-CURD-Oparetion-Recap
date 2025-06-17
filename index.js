@@ -80,19 +80,19 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/viewApplications/jobs/:jobId", async (req, res) => {
-      const id = req.params.id;
-      const query = {jobId: new ObjectId(id)}
+    app.get("/job_applications/jobs/:jobId", async (req, res) => {
+      const jobId = req.params.jobId;
+      const query = {jobId: jobId}
       const result = await jobsApplicationCollections.find(query).toArray()
       res.send(result)
     })
 
-    app.get("/job_applications/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await jobsApplicationCollections.findOne(query);
-      res.send(result);
-    });
+    // app.get("/job_applications/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await jobsApplicationCollections.findOne(query);
+    //   res.send(result);
+    // });
 
     app.post("/job_applications", async (req, res) => {
       const application = req.body;
