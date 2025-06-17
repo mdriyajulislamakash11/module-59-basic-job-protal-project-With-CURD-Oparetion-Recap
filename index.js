@@ -45,12 +45,6 @@ async function run() {
       res.send(result);
     });
 
-    app.post("/job_applications", async (req, res) => {
-      const application = req.body;
-      const result = await jobsApplicationCollections.insertOne(application);
-      res.send(result);
-    });
-
     // job application
 
     app.get("/job_applications", async (req, res) => {
@@ -72,6 +66,26 @@ async function run() {
         }
       }
 
+      res.send(result);
+    });
+
+    app.get("/job_applications/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await jobsApplicationCollections.findOne(query);
+      res.send(result);
+    });
+
+    app.post("/job_applications", async (req, res) => {
+      const application = req.body;
+      const result = await jobsApplicationCollections.insertOne(application);
+      res.send(result);
+    });
+
+    app.delete("/job_applications/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await jobsApplicationCollections.deleteOne(query);
       res.send(result);
     });
 
