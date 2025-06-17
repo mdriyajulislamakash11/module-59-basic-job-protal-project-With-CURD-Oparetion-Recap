@@ -45,6 +45,12 @@ async function run() {
       res.send(result);
     });
 
+    app.post("/job_applications", async (req, res) => {
+      const application = req.body;
+      const result = await jobsApplicationCollections.insertOne(application);
+      res.send(result);
+    });
+
     // job application
 
     app.get("/job_applications", async (req, res) => {
@@ -66,12 +72,6 @@ async function run() {
         }
       }
 
-      res.send(result);
-    });
-
-    app.post("/job_applications", async (req, res) => {
-      const application = req.body;
-      const result = await jobsApplicationCollections.insertOne(application);
       res.send(result);
     });
 
