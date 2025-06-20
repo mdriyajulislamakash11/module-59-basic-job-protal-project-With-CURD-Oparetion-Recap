@@ -1,5 +1,6 @@
 const express = require("express");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -9,8 +10,7 @@ const app = express();
 // madleware
 app.use(cors());
 app.use(express.json());
-
-
+app.use(cookieParser());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.zchez.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -36,7 +36,7 @@ async function run() {
       const email = req.query.email;
       let query = {};
       if (email) {
-        query = {hr_email: email}
+        query = { hr_email: email };
       }
       const cursor = jobsCollections.find(query);
       const result = await cursor.toArray();
@@ -51,11 +51,16 @@ async function run() {
     });
 
     // JWT token:
-    app.post('/jwt', async (req, res) => {
+    app.post("/jwt", async (req, res) => {
       const user = req.body;
-      const token = jwt.sign(user, 'secrate',  { expiresIn: '1h' });
-      res.send(token)
-    })
+      const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
+      res
+        .cookie("token", token, {
+          httpOnly: true, // http://localhost:5173
+          secure: false,
+        })
+        .send({ success: true });
+    });
 
     app.post("/jobs", async (req, res) => {
       const newJob = req.body;
@@ -89,12 +94,10 @@ async function run() {
 
     app.get("/job_applications/jobs/:jobId", async (req, res) => {
       const jobId = req.params.jobId;
-      const query = {jobId: jobId}
-      const result = await jobsApplicationCollections.find(query).toArray()
-      res.send(result)
-    })
-
-
+      const query = { jobId: jobId };
+      const result = await jobsApplicationCollections.find(query).toArray();
+      res.send(result);
+    });
 
     app.patch("/job_applications/:id", async (req, res) => {
       const id = req.params.id;
@@ -102,11 +105,14 @@ async function run() {
       const data = req.body;
       const updateDoc = {
         $set: {
-          status : data.status
-        }
-      }
+          status: data.status,
+        },
+      };
 
-      const result = await jobsApplicationCollections.updateOne(query, updateDoc);
+      const result = await jobsApplicationCollections.updateOne(
+        query,
+        updateDoc
+      );
       res.send(result);
     });
 
@@ -115,25 +121,24 @@ async function run() {
       const result = await jobsApplicationCollections.insertOne(application);
 
       const id = application.jobId;
-      const query = {_id: new ObjectId(id)}
-      const job = await jobsCollections.findOne(query)
+      const query = { _id: new ObjectId(id) };
+      const job = await jobsCollections.findOne(query);
 
       let newCount = 0;
-      if(job.applicationCount){
+      if (job.applicationCount) {
         newCount = job.applicationCount + 1;
-      }else{
+      } else {
         newCount = 1;
       }
 
-      const filter = {_id: new ObjectId(id) }
+      const filter = { _id: new ObjectId(id) };
       const updatedDoc = {
         $set: {
-          applicationCount: newCount
-        }
-      }
+          applicationCount: newCount,
+        },
+      };
 
       const updateResult = await jobsCollections.updateOne(filter, updatedDoc);
-
 
       res.send(result);
     });
