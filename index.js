@@ -8,7 +8,10 @@ const port = process.env.PORT || 5000;
 const app = express();
 
 // madleware
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5174"],
+  credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 
