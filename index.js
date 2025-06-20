@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt = require('jsonwebtoken');
 require("dotenv").config();
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -9,8 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// console.log(process.env.DB_USER);
-// console.log(process.env.DB_PASSWORD);
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.zchez.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -49,6 +49,13 @@ async function run() {
       const result = await jobsCollections.findOne(query);
       res.send(result);
     });
+
+    // JWT token:
+    app.post('/jwt', async (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, 'secrate',  { expiresIn: '1h' });
+      res.send(token)
+    })
 
     app.post("/jobs", async (req, res) => {
       const newJob = req.body;
