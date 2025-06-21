@@ -8,12 +8,34 @@ const port = process.env.PORT || 5000;
 const app = express();
 
 // madleware
-app.use(cors({
-  origin: ["http://localhost:5173"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
+
+const varifyToken = (req, res, next) => {
+
+  console.log("inside verify token middleware")
+  const token = req?.cookies?.token;
+  console.log(token)
+  if (!token) {
+    return res.status(401).send({ message: "unAuthorized access" });
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+    
+    if (error) {
+      return res.status(401).send({ message: "unAuthorized access" });
+    }
+
+    req.user = decoded
+    next();
+
+  });
+};
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.zchez.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -73,12 +95,11 @@ async function run() {
 
     // job application
 
-    app.get("/job_applications", async (req, res) => {
+    app.get("/job_applications", varifyToken, async (req, res) => {
       const email = req.query.email;
       const query = { applicantEmail: email };
 
       console.log("cookie: ", req.cookies);
-
 
       const result = await jobsApplicationCollections.find(query).toArray();
 
