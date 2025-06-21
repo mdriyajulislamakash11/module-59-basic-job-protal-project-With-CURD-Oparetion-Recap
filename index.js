@@ -29,7 +29,8 @@ const varifyToken = (req, res, next) => {
   if (!token) {  // varify kortese 
     return res.status(401).send({ message: "unAuthorized access" });
   }
-  jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+
+  jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {  // mukh kaj
 
     if (error) {
       return res.status(401).send({ message: "unAuthorized access" });
