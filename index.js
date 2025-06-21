@@ -9,7 +9,7 @@ const app = express();
 
 // madleware
 app.use(cors({
-  origin: ["http://localhost:5174"],
+  origin: ["http://localhost:5173"],
   credentials: true
 }));
 app.use(express.json());
@@ -76,6 +76,10 @@ async function run() {
     app.get("/job_applications", async (req, res) => {
       const email = req.query.email;
       const query = { applicantEmail: email };
+
+      console.log("cookie: ", req.cookies);
+
+
       const result = await jobsApplicationCollections.find(query).toArray();
 
       // fokira way te aggregate data
