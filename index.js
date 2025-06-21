@@ -105,6 +105,9 @@ async function run() {
       const query = { applicantEmail: email };
 
       console.log("cookie: ", req.cookies);
+      if(req.user.email !== req.query.email){
+        return res.status(403).send({message: "forbidden access"})
+      }
 
       const result = await jobsApplicationCollections.find(query).toArray();
 
