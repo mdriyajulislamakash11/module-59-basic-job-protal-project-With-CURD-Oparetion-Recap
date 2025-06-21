@@ -24,7 +24,9 @@ const varifyToken = (req, res, next) => {
 
   const token = req?.cookies?.token;  // token ta ekhan theke pabo
   console.log(token)
-  if (!token) {
+
+
+  if (!token) {  // varify kortese 
     return res.status(401).send({ message: "unAuthorized access" });
   }
   jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
