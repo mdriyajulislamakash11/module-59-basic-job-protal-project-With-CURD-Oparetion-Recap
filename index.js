@@ -17,6 +17,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// token verify
 const varifyToken = (req, res, next) => {
 
   console.log("inside verify token middleware")
@@ -26,7 +27,7 @@ const varifyToken = (req, res, next) => {
     return res.status(401).send({ message: "unAuthorized access" });
   }
   jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
-    
+
     if (error) {
       return res.status(401).send({ message: "unAuthorized access" });
     }
