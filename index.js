@@ -32,7 +32,7 @@ const varifyToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {  // mukh kaj
 
-    if (error) {
+    if (error) {  // arror asle error dibe
       return res.status(401).send({ message: "unAuthorized access" });
     }
 
