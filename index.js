@@ -20,7 +20,8 @@ app.use(cookieParser());
 // token verify
 const varifyToken = (req, res, next) => {
 
-  console.log("inside verify token middleware")
+  console.log("inside verify token middleware") // check korar jonno
+
   const token = req?.cookies?.token;
   console.log(token)
   if (!token) {
