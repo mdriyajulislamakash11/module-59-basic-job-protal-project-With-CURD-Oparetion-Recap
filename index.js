@@ -88,7 +88,7 @@ async function run() {
         .send({ success: true });
     });
 
-    // APIs Logout
+    // APIs Logout ------------------------------> token remove 
     app.post('/logout', (req, res) => {
       res.clearCookie('token', {
         httpOnly: true,
