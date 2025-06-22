@@ -19,26 +19,22 @@ app.use(cookieParser());
 
 // token verify
 const varifyToken = (req, res, next) => {
-
-  console.log("inside verify token middleware") // check korar jonno
-
-  const token = req?.cookies?.token;  // token ta ekhan theke pabo
-  console.log(token)
-
-
-  if (!token) {  // varify kortese 
+  console.log("inside verify token middleware"); // check korar jonno
+  const token = req?.cookies?.token; // token ta ekhan theke pabo
+  console.log(token);
+  if (!token) {
+    // varify kortese
     return res.status(401).send({ message: "unAuthorized access" });
   }
+  jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+    // mukh kaj
 
-  jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {  // mukh kaj
-
-    if (error) {  // arror asle error dibe
+    if (error) {
+      // arror asle error dibe
       return res.status(401).send({ message: "unAuthorized access" });
     }
-
-    req.user = decoded
+    req.user = decoded;
     next();
-
   });
 };
 
@@ -92,6 +88,17 @@ async function run() {
         .send({ success: true });
     });
 
+    // app.post("/jwt", async (req, res) => {
+    //   const user = req.body;
+    //   const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "2h" });
+    //   res
+    //     .cookie("token", token, {
+    //       httpOnly: true,
+    //       secure: false,
+    //     })
+    //     .send({ success: true });
+    // });
+
     app.post("/jobs", async (req, res) => {
       const newJob = req.body;
       const result = await jobsCollections.insertOne(newJob);
@@ -105,8 +112,8 @@ async function run() {
       const query = { applicantEmail: email };
 
       console.log("cookie: ", req.cookies);
-      if(req.user.email !== req.query.email){
-        return res.status(403).send({message: "forbidden access"})
+      if (req.user.email !== req.query.email) {
+        return res.status(403).send({ message: "forbidden access" });
       }
 
       const result = await jobsApplicationCollections.find(query).toArray();
