@@ -88,16 +88,6 @@ async function run() {
         .send({ success: true });
     });
 
-    // app.post("/jwt", async (req, res) => {
-    //   const user = req.body;
-    //   const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "2h" });
-    //   res
-    //     .cookie("token", token, {
-    //       httpOnly: true,
-    //       secure: false,
-    //     })
-    //     .send({ success: true });
-    // });
 
     app.post("/jobs", async (req, res) => {
       const newJob = req.body;
