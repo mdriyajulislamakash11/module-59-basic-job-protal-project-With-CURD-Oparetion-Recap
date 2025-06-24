@@ -10,7 +10,11 @@ const app = express();
 // madleware
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:5173",
+      "https://job-protal-project.web.app",
+      "https://job-protal-project.firebaseapp.com",
+    ],
     credentials: true,
   })
 );
@@ -88,15 +92,15 @@ async function run() {
         .send({ success: true });
     });
 
-    // APIs Logout ------------------------------> token remove 
-    app.post('/logout', (req, res) => {
-      res.clearCookie('token', {
-        httpOnly: true,
-        secure: false,
-      })
-      .send({success: true})
-    })
-
+    // APIs Logout ------------------------------> token remove
+    app.post("/logout", (req, res) => {
+      res
+        .clearCookie("token", {
+          httpOnly: true,
+          secure: false,
+        })
+        .send({ success: true });
+    });
 
     app.post("/jobs", async (req, res) => {
       const newJob = req.body;
